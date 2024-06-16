@@ -1,16 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
-const Header = () =>{
-  const cartData = useSelector((state)=> state.reducer)
-  const [cartItems, setCartItems] = useState(0);
-  useEffect(()=>{
-    setCartItems(cartData.length)
-  },[cartData])
-  return (
-    <View style={{height: 30, alignItems:'flex-end', paddingHorizontal: 20}}>
-      <Text>Cart : {cartItems}</Text>
-    </View>
-  )
+import { connect } from "react-redux";
+
+class Header extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      cartItems: 0,
+    };
+  }
+
+  componentDidMount() {
+    this.updateCartItems(this.props.cartData);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.cartData !== this.props.cartData) {
+      this.updateCartItems(this.props.cartData);
+    }
+  }
+
+  updateCartItems = (cartData) => {
+    this.setState({ cartItems: cartData.length });
+  };
+
+  render() {
+    const { cartItems } = this.state;
+
+    return (
+      <View style={{ height: 30, alignItems: 'flex-end', paddingHorizontal: 20 }}>
+        <Text>Cart : {cartItems}</Text>
+      </View>
+    );
+  }
 }
-export default Header;
+
+const mapStateToProps = (state) => ({
+  cartData: state.reducer,
+});
+
+export default connect(mapStateToProps)(Header);
